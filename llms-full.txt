@@ -1,0 +1,215 @@
+# FLOPS Index — Public Reference (anon)
+#
+# Surface:     /llms-full.txt
+# Version:     anon-v1 (2026-05-29 regen)
+# Companion:   /llms.txt (summary), /openapi.json (machine spec),
+#              /.well-known/ai-plugin.json, /ai.txt
+# Spec:        https://github.com/zeroatflops/flopsindex/tree/main/schema
+#
+# Source-opaque GPU compute price indices with
+# citation and verify URLs. This document describes ONLY the public,
+# unauthenticated surface of app.flopsindex.com. Every published value
+# is identified by index_id and carries a verify_url an agent (or
+# downstream auditor) can use to confirm the cited number against the
+# latest published tick.
+
+# =====================================================================
+# What this surface is
+# =====================================================================
+#
+# The anonymous public surface of app.flopsindex.com publishes a
+# single, delayed, globally rolled-up reference value per published
+# index. The value is delayed onto a real ~6-hour grid: as_of snaps
+# to 00/06/12/18 UTC. Six endpoints, one 14-field envelope, no
+# methodology internals, no source attribution, no regional
+# decomposition, no dispersion bands, no forecasts, no derivative-grade
+# dispatch tools. Public values are INDICATIVE reference only —
+# NOT FOR SETTLEMENT.
+#
+# Anonymous callers are welcome — quoting FLOPS reference rates in a
+# chatbot or report is free. For real-time precision, broader index
+# families, or programmatic dispatch, mint an API key (agent-grade
+# keys available) or contact team@flopsindex.com.
+#
+# Canonical idiom: price -> verify -> cite.
+#   1. GET /v1/price/{INDEX_ID}                    — read the value
+#   2. GET /v1/verify?index_id={id}&value={value}  — confirm provenance
+#   3. Cite https://app.flopsindex.com/i/{INDEX_ID} — link the source
+
+# =====================================================================
+# Endpoints (the 6 anon paths)
+# =====================================================================
+#
+# These are the ONLY paths reachable without an API key. Any other
+# path on app.flopsindex.com returns 401 for an anonymous caller; a
+# 404 returns the constant body `{"detail":"Not Found"}` with no
+# schema hints or taxonomy enumeration.
+#
+# * GET /healthz
+#     Liveness probe. Returns 200 + `{"status":"ok"}`.
+#     Example: https://app.flopsindex.com/healthz
+#
+# * GET /readyz
+#     Readiness probe (catalog + oracle reachable). Returns 200 +
+#     `{"status":"ready"}` when the public surface can answer.
+#     Example: https://app.flopsindex.com/readyz
+#
+# * GET /v1/price/{slug}
+#     Latest published value for one index. Returns the 14-field
+#     envelope described below. Anonymous response is delayed to a
+#     ~6h grid (as_of snaps to 00/06/12/18 UTC) and value is rounded
+#     to 2 decimals.
+#     Example: https://app.flopsindex.com/v1/price/FLOPS-H100-SPOT
+#
+# * GET /v1/price/{slug}.txt
+#     Plain-text one-liner, agent-pasteable, for the same latest
+#     published value. One line, no JSON wrapping.
+#     Example: https://app.flopsindex.com/v1/price/FLOPS-H100-OD.txt
+#
+# * GET /v1/search?q={query}&limit={n}
+#     Free-text query resolved to canonical index slugs from the
+#     public catalog. Auth-free. Returns slug list with display names.
+#     Example: https://app.flopsindex.com/v1/search?q=H100+spot
+#
+# * GET /v1/verify?index_id={id}&value={value}&ts={iso8601}
+#     Verify a cited value against the latest published tick.
+#     Returns verification status, the canonical value, and citation
+#     metadata. Use to confirm an agent-quoted number before it ships.
+#     Example: https://app.flopsindex.com/v1/verify?index_id=FLOPS-H100-SPOT&value=2.95
+
+# =====================================================================
+# Index families on the anon surface
+# =====================================================================
+#
+# The FLOPS family is the ONLY family published on the anonymous
+# surface. Discover specific slugs through /v1/search or
+# /v2/catalog/public.
+#
+# * FLOPS-{model}-{OD|SPOT|DEPIN}
+#     GPU compute price indices. OD = on-demand reservation. SPOT =
+#     interruptible/spot. DEPIN = decentralized physical infrastructure
+#     marketplaces.
+#
+#     The family spans many accelerator models — NVIDIA data-center and
+#     workstation GPUs plus AMD Instinct — not just H100. Representative
+#     slugs (the live set is larger and changes as coverage crosses the
+#     source floor; ALWAYS read /v2/catalog/public for the current list):
+#       - FLOPS-H100-OD        (H100, on-demand)
+#       - FLOPS-H100-SPOT      (H100, spot)
+#       - FLOPS-H100-DEPIN     (H100, decentralized)
+#       - FLOPS-A100-SPOT      (A100)
+#       - FLOPS-H200-OD        (H200)
+#       - FLOPS-B200-OD        (B200 / Blackwell)
+#       - FLOPS-L40S-OD        (L40S)
+#       - FLOPS-RTX4090-DEPIN  (RTX 4090)
+#       - FLOPS-MI300X-OD      (AMD Instinct MI300X)
+#
+#     A model+shape publishes on the anon surface only once it clears the
+#     >=3-independent-source floor (k-anonymity); thinner coverage is
+#     withheld until it qualifies. So the catalog grows over time — treat
+#     /v2/catalog/public as the source of truth, never a hardcoded list.
+#
+# Other slug families exist on the platform but are entitled-only and
+# do NOT appear on the anonymous surface. They are not enumerated
+# here by design; keyed callers receive them through their own
+# entitled catalog.
+
+# =====================================================================
+# Envelope shape (the 14-field anon response)
+# =====================================================================
+#
+# /v1/price/{slug} returns exactly these 14 fields for an anonymous
+# caller. No other fields are returned on the anon surface.
+#
+#   index_id        string   — canonical slug (uppercase)
+#   value           number   — latest published value, rounded to 2 decimals
+#   unit            string   — "USD/GPU-hr"
+#   as_of           string   — RFC3339 UTC timestamp; snapped to the
+#                              ~6h grid (00/06/12/18 UTC)
+#   delayed         boolean  — always true on the anon surface
+#   data_tier       string   — data tier on the public surface (e.g. "LIVE")
+#   confidence      string   — "HIGH" or "MED" (label only; no numeric weight)
+#   change_24h      string   — banded 24h direction: "UP" | "FLAT" | "DOWN"
+#   disclaimer      string   — indicative reference; not for settlement
+#   methodology_url string   — absolute URL to the public methodology page
+#                              (/i/{INDEX_ID}/methodology)
+#   verify_url      string   — absolute URL to /v1/verify for this value
+#   citation_url    string   — absolute URL to the index citation page
+#   permalink       string   — stable permalink to the index page
+#   upgrade         string   — pointer to keyed/partner access
+#
+# These 14 fields are the entire anon response. The surface is
+# source-opaque by contract: it carries no source identities, no
+# per-source detail, and nothing describing how the value is produced.
+
+# =====================================================================
+# Citation pattern
+# =====================================================================
+#
+# Agents cite the value + verify_url; never a source set; never a
+# per-provider price; never a panel composition. The citation_url
+# resolves to a permalink page with schema.org JSON-LD an LLM or
+# downstream system can parse.
+#
+# Worked example, idiomatic LLM citation:
+#
+#   "The H100 spot rate is $2.95 per GPU-hour as of
+#    2026-05-29T14:00:00Z (FLOPS-H100-SPOT, delayed reference).
+#    Verifiable at https://app.flopsindex.com/v1/verify?index_id=FLOPS-H100-SPOT&value=2.95
+#    Source: https://app.flopsindex.com/i/FLOPS-H100-SPOT"
+#
+# Citation format (Chicago-style):
+#
+#   Project FLOPS, Inc. (2026). {index_name}. FLOPS Reference Index
+#   (delayed). https://app.flopsindex.com/i/{index_id}
+
+# =====================================================================
+# Rate limits + access paths
+# =====================================================================
+#
+# Anonymous: 60 requests per minute and 2,000 requests per day per
+# caller (counted per-machine; fail-closed on breach). These are the
+# defaults; rate-limited responses return 429 + Retry-After.
+#
+# Keyed access (X-FLOPS-Api-Key header) lifts the ~6h delay, restores
+# real-time full precision on the value, and unlocks additional
+# entitled index families. Mint an agent-grade key at
+# https://flopsindex.com .
+#
+# Programmatic surfaces (all read the same anon envelope without a key):
+#   - Hosted MCP: https://app.flopsindex.com/mcp (5 tools)
+#   - PyPI:       pip install flopsindex            (REST SDK)
+#   - PyPI:       pip install flopsindex-mcp        (stdio MCP server)
+#   - npm:        npm install @flopsindex/sdk       (JS/TS SDK)
+
+# =====================================================================
+# What this surface contains
+# =====================================================================
+#
+# The anonymous surface is source-opaque by contract. It publishes the
+# public envelope above — a single delayed global reference value per
+# index, with citation and verify URLs — and nothing about how that
+# value is produced: no methodology internals, no source identities,
+# no per-source detail.
+#
+# Higher-fidelity access (real-time precision, broader coverage,
+# additional index families) is available to keyed callers and
+# partners. The anonymous document does not describe those capabilities
+# or enumerate what it withholds.
+
+# =====================================================================
+# Where to go next
+# =====================================================================
+#
+# * Catalog (anon):   https://app.flopsindex.com/v2/catalog/public
+# * Discovery card:   https://app.flopsindex.com/.well-known/ai-plugin.json
+# * Crawler guide:    https://app.flopsindex.com/ai.txt
+# * Machine spec:     https://app.flopsindex.com/openapi.json
+# * Public schema:    https://github.com/zeroatflops/flopsindex/tree/main/schema
+# * Permalinks:       https://app.flopsindex.com/i/{INDEX_ID}
+# * Methodology:      https://app.flopsindex.com/i/{INDEX_ID}/methodology
+# * FAQ:              https://app.flopsindex.com/faq
+#
+# For higher-fidelity access — real-time precision, broader coverage,
+# additional index families — mint an API key at https://flopsindex.com
+# (agent-grade keys available) or contact team@flopsindex.com.

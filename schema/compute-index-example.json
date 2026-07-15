@@ -1,0 +1,16 @@
+{
+  "index_id": "FLOPS-H100-OD",
+  "value": 2.99,
+  "unit": "USD/GPU-hr",
+  "as_of": "2026-07-14T18:00:00+00:00",
+  "delayed": true,
+  "data_tier": "LIVE",
+  "confidence": "HIGH",
+  "change_24h": "FLAT",
+  "disclaimer": "FLOPS index reference level as of the most recent 6-hour UTC mark, refreshed every 6 hours; indicative. Not a provider quote, not a settlement mark, not investment advice.",
+  "methodology_url": "https://app.flopsindex.com/i/FLOPS-H100-OD/methodology",
+  "verify_url": "https://app.flopsindex.com/v1/verify?index_id=FLOPS-H100-OD",
+  "citation_url": "https://app.flopsindex.com/i/FLOPS-H100-OD",
+  "permalink": "https://app.flopsindex.com/i/FLOPS-H100-OD",
+  "upgrade": "Real-time, full-precision, regional and historical data plus additional tooling are available to customers: team@flopsindex.com"
+}

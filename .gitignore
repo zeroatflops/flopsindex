@@ -1,0 +1,105 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# venvs
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.hypothesis/
+*.cover
+
+# --- Node / TypeScript ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.eslintcache
+*.tsbuildinfo
+.next/
+.nuxt/
+.turbo/
+
+# typescript build output (when src is the source of truth)
+sdk/typescript/dist/
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Secrets / env (defensive — none should be here, but pin it anyway) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+.flops-secrets/
+
+# --- Build artifacts / scratch ---
+*.log
+*.tmp
+.scratch/
+tmp/
+
+# locally-built wheels for sanity-checking — never committed
+dist-check/
+# Built wheels must never be committed to the source repo (they escaped the
+# dist/ + wheels/ rules above once, as flopsindex_mcp/*.whl + flopsindex_whl/).
+*.whl
+flopsindex_whl/
+
+# Credential / secret files — never commit.
+.npmrc
+.pypirc
+.netrc
+keys.env
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+secrets.json
+token.txt
+
+# Local-only publish-guard pattern list — contains internal literals (retired
+# hosts, private dev-repo path/codename); must never reach this public repo.
+scripts/forbidden-patterns.local.txt

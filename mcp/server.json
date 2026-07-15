@@ -1,0 +1,35 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.zeroatflops/flopsindex-mcp",
+  "title": "FLOPS Compute Intelligence",
+  "description": "GPU compute price indices over MCP; every value carries a verify URL. Five key-free tools.",
+  "version": "0.12.2",
+  "repository": {
+    "url": "https://github.com/zeroatflops/flopsindex",
+    "source": "github",
+    "subfolder": "mcp"
+  },
+  "websiteUrl": "https://flopsindex.com",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "flopsindex-mcp",
+      "version": "0.12.2",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeHint": "uvx",
+      "environmentVariables": [
+        {
+          "name": "FLOPS_API_KEY",
+          "description": "Optional API key that upgrades the five public tools (list_indices, search_indices, get_price, get_index, verify) to full-precision values. Without it the tools work key-free and return the delayed public price. Forwarded as the X-FLOPS-Api-Key header. A partner tier with higher fidelity and expanded coverage is available — contact team@flopsindex.com.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/canonical": "https://registry.modelcontextprotocol.io/v0/servers/io.github.zeroatflops/flopsindex-mcp"
+  }
+}

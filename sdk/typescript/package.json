@@ -1,0 +1,55 @@
+{
+  "name": "@flopsindex/sdk",
+  "version": "0.9.2",
+  "description": "TypeScript/JavaScript SDK for the FLOPS Index — live GPU compute pricing reference rates with verifiable provenance.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke": "node --experimental-strip-types smoke.ts"
+  },
+  "keywords": [
+    "flops",
+    "gpu",
+    "compute",
+    "pricing",
+    "benchmark",
+    "reference-rate",
+    "fintech",
+    "mcp"
+  ],
+  "author": "zeroatflops <team@flopsindex.com>",
+  "license": "Apache-2.0",
+  "homepage": "https://app.flopsindex.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeroatflops/flopsindex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zeroatflops/flopsindex/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

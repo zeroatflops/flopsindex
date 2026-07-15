@@ -1,0 +1,451 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FLOPS Index — Public API",
+    "description": "Public, source-opaque GPU compute price indices with citation and verify URLs. https://flopsindex.com",
+    "version": "v0.5"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "summary": "Healthz",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Healthz Healthz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "summary": "Readyz",
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Readyz Readyz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/price/{slug}": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Public Price",
+        "description": "Latest published value for one FLOPS index. Auth-free. Response shape is stable; field removals are breaking. Anonymous callers receive the delayed public price.",
+        "operationId": "public_price_v1_price__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicPrice"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/price/{slug}.txt": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Public Price Txt",
+        "description": "Plain-text one-liner for the latest published index value.",
+        "operationId": "public_price_txt_v1_price__slug__txt_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/search": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Public Search",
+        "description": "Resolve a free-text query to canonical index slugs from the public catalog. Auth-free.",
+        "operationId": "public_search_v1_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Public Search V1 Search Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify": {
+      "get": {
+        "summary": "Verify Index Value",
+        "description": "Verify a cited FLOPS index value against the latest published tick. Returns verification status, the canonical value, and citation metadata.",
+        "operationId": "verify_index_value_v1_verify_get",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Index Id"
+            }
+          },
+          {
+            "name": "ts",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ts"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "required": false,
+            "description": "The number you want checked against the published index. Omit for a plain lookup (verified: null).",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Value"
+            }
+          },
+          {
+            "name": "expected",
+            "in": "query",
+            "required": false,
+            "deprecated": true,
+            "description": "Deprecated alias for `value`. `value` wins if both are sent.",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Expected"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Verify Index Value V1 Verify Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/catalog/public": {
+      "get": {
+        "summary": "Public Catalog",
+        "description": "The list of LIVE public FLOPS compute-price indices. Source-opaque.",
+        "operationId": "public_catalog_v2_catalog_public_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "indices": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PublicPrice"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "_filter_note": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "PublicPrice": {
+        "type": "object",
+        "description": "The public, source-opaque compute reference payload. See schema/compute-index-spec.v0.1.json.",
+        "required": [
+          "index_id",
+          "value",
+          "unit",
+          "as_of",
+          "delayed",
+          "data_tier",
+          "confidence",
+          "change_24h",
+          "disclaimer",
+          "methodology_url",
+          "verify_url",
+          "citation_url",
+          "permalink",
+          "upgrade"
+        ],
+        "properties": {
+          "index_id": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "delayed": {
+            "type": "boolean"
+          },
+          "data_tier": {
+            "type": "string",
+            "enum": [
+              "LIVE"
+            ]
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "HIGH",
+              "MED"
+            ]
+          },
+          "change_24h": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "UP",
+              "FLAT",
+              "DOWN",
+              null
+            ]
+          },
+          "disclaimer": {
+            "type": "string"
+          },
+          "methodology_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "verify_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "citation_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "permalink": {
+            "type": "string",
+            "format": "uri"
+          },
+          "upgrade": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

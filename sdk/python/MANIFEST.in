@@ -1,0 +1,4 @@
+prune tests
+recursive-exclude tests *
+global-exclude *.pyc
+global-exclude __pycache__

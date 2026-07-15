@@ -1,0 +1,12 @@
+FLOPS Index — Compute Intelligence
+Copyright 2026 FLOPS Index
+
+This product includes software developed at FLOPS Index
+(https://flopsindex.com/).
+
+The hosted FLOPS gateway, methodology, and price data referenced from this
+repository remain the proprietary work of FLOPS Index; the Apache License
+above governs the SOURCE CODE in this repository (SDK, MCP server, schema,
+example integrations). It does not grant rights to the underlying price
+data, the FLOPS trademark, or the hosted index methodology beyond what is
+necessary to use the published APIs.

@@ -1,0 +1,105 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "fci": "https://github.com/zeroatflops/flopsindex/tree/main/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+    "ComputeReferenceIndex": "fci:ComputeReferenceIndex",
+
+    "index_id":        "fci:indexId",
+    "value":           { "@id": "fci:value", "@type": "xsd:decimal" },
+    "unit":            "fci:unit",
+    "as_of":           { "@id": "fci:asOf", "@type": "xsd:dateTime" },
+    "delayed":         { "@id": "fci:delayed", "@type": "xsd:boolean" },
+    "data_tier":       "fci:dataTier",
+    "confidence":      "fci:confidence",
+    "change_24h":      "fci:change24h",
+    "disclaimer":      "fci:disclaimer",
+    "methodology_url": { "@id": "fci:methodologyUrl", "@type": "@id" },
+    "verify_url":      { "@id": "fci:verifyUrl", "@type": "@id" },
+    "citation_url":    { "@id": "fci:citationUrl", "@type": "@id" },
+    "permalink":       { "@id": "fci:permalink", "@type": "@id" },
+    "upgrade":         "fci:upgrade"
+  },
+
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/zeroatflops/flopsindex/blob/main/schema/compute-index-spec.v0.1.json",
+  "title": "Compute Reference Index — Public Payload (v0.1)",
+  "description": "JSON Schema for the public, source-opaque compute reference price payload returned by GET /v1/price/{index_id} on app.flopsindex.com. Field names are snake_case, matching the live API exactly.",
+
+  "type": "object",
+  "required": [
+    "index_id", "value", "unit", "as_of", "delayed", "data_tier",
+    "confidence", "change_24h", "disclaimer", "methodology_url",
+    "verify_url", "citation_url", "permalink", "upgrade"
+  ],
+  "properties": {
+    "index_id": {
+      "type": "string",
+      "description": "Canonical slug for the index (e.g. FLOPS-H100-OD, FLOPS-A100-SPOT).",
+      "pattern": "^[A-Z][A-Z0-9_-]+$"
+    },
+    "value": {
+      "type": "number",
+      "description": "Current published global value, rounded to 2 decimals, in the units declared by 'unit'."
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of measure (e.g. 'USD/GPU-hr')."
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp the value is published as-of (RFC 3339). On the anonymous surface this snaps to the ~6h grid (00/06/12/18 UTC)."
+    },
+    "delayed": {
+      "type": "boolean",
+      "description": "Always true on the anonymous surface — the value is a delayed reference, not a real-time tick."
+    },
+    "data_tier": {
+      "type": "string",
+      "description": "Data tier on the public surface.",
+      "enum": ["LIVE"]
+    },
+    "confidence": {
+      "type": "string",
+      "description": "Confidence label on the published value (label only; no numeric weight).",
+      "enum": ["HIGH", "MED"]
+    },
+    "change_24h": {
+      "type": ["string", "null"],
+      "description": "Banded 24h change direction, or null when no 24h comparison is available.",
+      "enum": ["UP", "FLAT", "DOWN", null]
+    },
+    "disclaimer": {
+      "type": "string",
+      "description": "Human-readable indicative-reference / not-for-settlement disclaimer."
+    },
+    "methodology_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Public methodology page for this index."
+    },
+    "verify_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Public URL to verify a cited value against the index."
+    },
+    "citation_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical citation URL — the permalink to surface alongside a quoted value."
+    },
+    "permalink": {
+      "type": "string",
+      "format": "uri",
+      "description": "Stable permalink to the index page."
+    },
+    "upgrade": {
+      "type": "string",
+      "description": "Pointer to keyed / customer access for higher-fidelity data."
+    }
+  },
+  "additionalProperties": false
+}
