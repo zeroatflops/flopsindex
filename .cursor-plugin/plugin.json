@@ -1,0 +1,7 @@
+{
+  "name": "flopsindex",
+  "description": "Key-free GPU compute rental reference prices (H100, A100, H200; spot / on-demand / DePIN). Every value carries a verify URL for citation.",
+  "version": "0.1.0",
+  "author": { "name": "FLOPS Index" },
+  "homepage": "https://app.flopsindex.com"
+}
