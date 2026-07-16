@@ -1,0 +1,23 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+
+configSchema:
+  # JSON Schema for the MCP's configuration options.
+  type: object
+  properties:
+    flopsApiKey:
+      type: string
+      description: Optional FLOPS API key. Upgrades the five public tools to real-time full precision; forwarded as the X-FLOPS-Api-Key header. Never required — the server works key-free against the delayed public price.
+  required: []
+
+commandFunction: |-
+  (config) => ({
+    command: 'uvx',
+    args: ['flopsindex-mcp'],
+    env: config.flopsApiKey ? { FLOPS_API_KEY: config.flopsApiKey } : {}
+  })
+
+exampleConfig:
+  flopsApiKey: flops_xxxxxxxxxxxx
