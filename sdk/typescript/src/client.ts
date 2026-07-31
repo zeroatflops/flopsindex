@@ -23,7 +23,7 @@ const DEFAULT_BASE_URL = "https://app.flopsindex.com";
 const DEFAULT_TIMEOUT_MS = 30_000;
 // Must match package.json "version" — it is sent as the User-Agent. It had
 // drifted (0.9.1 here vs 0.9.2 published); test/client.test.ts now pins it.
-const SDK_VERSION = "0.9.2";
+const SDK_VERSION = "0.9.3";
 
 function envApiKey(): string | undefined {
   // Guarded so the SDK works in browsers where `process` is undefined.

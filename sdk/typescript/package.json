@@ -1,6 +1,6 @@
 {
   "name": "@flopsindex/sdk",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "TypeScript/JavaScript SDK for the FLOPS Index — live GPU compute pricing reference rates with verifiable provenance.",
   "type": "module",
   "main": "./dist/index.js",

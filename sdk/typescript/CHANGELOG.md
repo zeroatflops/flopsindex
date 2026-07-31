@@ -3,6 +3,25 @@
 All notable changes to the `@flopsindex/sdk` TypeScript/JavaScript SDK.
 Versioning follows semver; semver guarantees apply only at 1.0 and above.
 
+## 0.9.3 — 2026-07-31
+
+- **The published User-Agent lied about the version.** `SDK_VERSION` was left at
+  `"0.9.1"` when the package shipped as 0.9.2, so every request from every 0.9.2
+  install reported `@flopsindex/sdk/0.9.1`. The two releases were
+  indistinguishable in server-side analytics. The source was corrected after
+  0.9.2 was already published, so 0.9.3 is the first artifact that actually
+  carries the fix. The guard against it — a test that drives a real request and
+  asserts the outgoing `User-Agent` matches `package.json` — landed in that same
+  commit, which is exactly why it did not catch the original release.
+- **The README advertised four index ids that do not exist** — `FLOPS-SPOT`,
+  `FLOPS-OD`, `FLOPS-DEPIN`, all of which 404. They are market *types*, not index
+  ids. Replaced with ids verified live: `FLOPS-H100-OD`, `FLOPS-A100-SPOT`,
+  `FLOPS-A100-DEPIN`. This page renders on npm, so the quick-start it shipped
+  could not be followed successfully.
+- **Two cross-repo `#public-access` links were dead.** Repointed.
+
+No API change.
+
 ## 0.9.2 — 2026-07-15
 
 - Dropped the misleading `tokens` package keyword — this is a compute-only
