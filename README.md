@@ -41,6 +41,19 @@ A **partner tier** with higher fidelity and expanded coverage is available — c
 
 ---
 
+## Features
+
+- **Five key-free tools** — `list_indices`, `search_indices`, `get_price`, `get_index`, `verify`. No API key, no signup, no configuration.
+- **Every value carries a verify URL** — check any published number against the index from your own code. `verify` returns whether a cited value matches.
+- **Spot, on-demand and DePIN** reference prices per chip and market type.
+- **Three vendors** — NVIDIA data-center and workstation GPUs, AMD MI300X, and Intel Gaudi 2. Enumerate the live set via [`/v2/catalog/public`](https://app.flopsindex.com/v2/catalog/public).
+- **Source-opaque by contract** — the value plus citation and verify links, never the inputs behind it.
+- **Delayed onto a ~6h grid** (00/06/12/18 UTC), 2dp values, banded 24h change, label confidence. Indicative reference — not for settlement.
+- **Zero install or local** — hosted MCP gateway at `https://app.flopsindex.com/mcp`, or `uvx flopsindex-mcp`.
+- **SDKs included** — Python (`flopsindex`), TypeScript (`@flopsindex/sdk`), and LangChain / LlamaIndex (`langchain-flopsindex`).
+
+---
+
 ## What's in this repo
 
 | Path | What |
