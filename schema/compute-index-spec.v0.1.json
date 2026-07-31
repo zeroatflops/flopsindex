@@ -37,8 +37,8 @@
   "properties": {
     "index_id": {
       "type": "string",
-      "description": "Canonical slug for the index (e.g. FLOPS-H100-OD, FLOPS-A100-SPOT).",
-      "pattern": "^[A-Z][A-Z0-9_-]+$"
+      "description": "Canonical slug for the index (e.g. FLOPS-H100-OD, FLOPS-A100-SPOT, FLOPS-RTX6000Ada-OD). Mixed case occurs in vendor architecture names (Ada, Blackwell), so only the FIRST character is constrained to upper case.",
+      "pattern": "^[A-Z][A-Za-z0-9_-]+$"
     },
     "value": {
       "type": "number",

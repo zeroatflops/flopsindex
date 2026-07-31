@@ -294,7 +294,7 @@
                     "indices": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/PublicPrice"
+                        "$ref": "#/components/schemas/CatalogRow"
                       }
                     },
                     "count": {
@@ -445,6 +445,69 @@
           }
         },
         "additionalProperties": false
+      },
+      "CatalogRow": {
+        "type": "object",
+        "description": "A row of GET /v2/catalog/public. NOT the same shape as PublicPrice: the catalog is a discovery listing, so it carries `family` and omits the citation/permalink/methodology/verify links, `data_tier`, `disclaimer` and `upgrade` that the single-index endpoints return. Verified against all 46 live rows on 2026-07-31.",
+        "required": [
+          "index_id",
+          "family",
+          "value",
+          "unit",
+          "as_of",
+          "confidence",
+          "change_24h",
+          "delayed"
+        ],
+        "properties": {
+          "index_id": {
+            "type": "string",
+            "example": "FLOPS-H100-OD"
+          },
+          "family": {
+            "type": "string",
+            "example": "FLOPS",
+            "description": "Index family. The public surface serves the FLOPS family only."
+          },
+          "value": {
+            "type": "number",
+            "example": 2.99,
+            "description": "Reference level, 2dp."
+          },
+          "unit": {
+            "type": "string",
+            "example": "USD/GPU-hr"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Snapped to the most recent 6-hour UTC mark (00/06/12/18)."
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "HIGH",
+              "MED"
+            ],
+            "description": "Label only, never a numeric weight."
+          },
+          "change_24h": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "UP",
+              "FLAT",
+              "DOWN",
+              null
+            ],
+            "description": "Banded direction, never the cardinal percentage. May be null when no 24h baseline exists."
+          },
+          "delayed": {
+            "type": "boolean"
+          }
+        }
       }
     }
   }
