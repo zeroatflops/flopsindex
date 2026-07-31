@@ -3,7 +3,7 @@
   "name": "io.github.zeroatflops/flopsindex-mcp",
   "title": "FLOPS Compute Intelligence",
   "description": "GPU compute price indices over MCP; every value carries a verify URL. Five key-free tools.",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "repository": {
     "url": "https://github.com/zeroatflops/flopsindex",
     "source": "github",
@@ -14,7 +14,7 @@
     {
       "registryType": "pypi",
       "identifier": "flopsindex-mcp",
-      "version": "0.12.2",
+      "version": "0.12.3",
       "transport": {
         "type": "stdio"
       },

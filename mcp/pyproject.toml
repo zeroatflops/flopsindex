@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flopsindex-mcp"
-version = "0.12.2"
+version = "0.12.3"
 description = "MCP server for FLOPS public compute indices — catalog, search, price, verify. Works with Claude, Cursor, Windsurf, or any MCP host."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -14,8 +14,8 @@ authors = [{name = "zeroatflops", email = "team@flopsindex.com"}]
 keywords = ["mcp", "flops", "gpu", "compute", "pricing", "reference-rate"]
 
 dependencies = [
-    "mcp>=1.0.0",
-    "httpx>=0.26.0",
+    "mcp>=1.3.0,<2",   # CAP: mcp 2.0.0 (2026-07-28) removed Server.list_tools/call_tool
+    "httpx>=0.26.0,<1",
 ]
 
 [project.optional-dependencies]
