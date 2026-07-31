@@ -81,7 +81,7 @@ The same value is reachable via the SDK and via the MCP `get_index` tool — eve
 | Endpoint | What |
 |---|---|
 | [`/mcp`](https://app.flopsindex.com/mcp) | Hosted MCP gateway — same 5 public tools, no install |
-| [`/v2/catalog/public`](https://app.flopsindex.com/v2/catalog/public) | Public catalog (FLOPS-SPOT, FLOPS-OD, FLOPS-DEPIN) |
+| [`/v2/catalog/public`](https://app.flopsindex.com/v2/catalog/public) | Public catalog — every live index id (spot, on-demand and DePIN) |
 | [`/.well-known/agent.json`](https://app.flopsindex.com/.well-known/agent.json) | Agent2Agent (A2A) discovery card |
 | [`/llms.txt`](https://app.flopsindex.com/llms.txt) | LLM-discovery manifest |
 | [`/llms-full.txt`](https://app.flopsindex.com/llms-full.txt) | Deeper agent-context blob |

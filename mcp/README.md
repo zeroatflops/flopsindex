@@ -12,15 +12,15 @@
 
 MCP server for the FLOPS public compute price indices — catalog, search, price lookup, and verification over stdio. Works with Claude, Cursor, Windsurf, or any MCP-capable host.
 
-**Monorepo** — [flopsindex](https://github.com/zeroatflops/flopsindex) · [Public access overview](https://github.com/zeroatflops/flopsindex#public-access)
+**Monorepo** — [flopsindex](https://github.com/zeroatflops/flopsindex) · [Public access overview](https://github.com/zeroatflops/flopsindex#whats-distinctive)
 
 ## Public access
 
-This package exposes the **public FLOPS index surface** only: citeable reference rates with verify and permalink URLs. Index construction methodology is not published in this repository — see [flopsindex.com](https://flopsindex.com) and the [public access overview](https://github.com/zeroatflops/flopsindex#public-access).
+This package exposes the **public FLOPS index surface** only: citeable reference rates with verify and permalink URLs. Index construction methodology is not published in this repository — see [flopsindex.com](https://flopsindex.com) and the [public access overview](https://github.com/zeroatflops/flopsindex#whats-distinctive).
 
 | Access | What you get | How (this package) |
 |---|---|---|
-| **Anonymous (default)** | Delayed public price (~6h grid; indicative, not for settlement) for the FLOPS family (FLOPS-SPOT, FLOPS-OD, FLOPS-DEPIN). Built for agents, citation, and lookup. | No API key — stdio server or [hosted `/mcp`](https://app.flopsindex.com/mcp) |
+| **Anonymous (default)** | Delayed public price (~6h grid; indicative, not for settlement) for the FLOPS family — spot, on-demand and DePIN market types, e.g. `FLOPS-H100-OD`, `FLOPS-A100-SPOT`, `FLOPS-A100-DEPIN`. Built for agents, citation, and lookup. | No API key — stdio server or [hosted `/mcp`](https://app.flopsindex.com/mcp) |
 | **Keyed** | Same five tools at **real-time, full precision**. | Set `FLOPS_API_KEY` (forwarded as `X-FLOPS-Api-Key`) |
 | **Partner** | **Higher fidelity**, expanded coverage, and additional detail beyond the public delayed surface. | [team@flopsindex.com](mailto:team@flopsindex.com) |
 

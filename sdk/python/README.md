@@ -8,7 +8,7 @@
 [![Spec](https://img.shields.io/badge/JSON--LD-v0.1-blue)](https://github.com/zeroatflops/flopsindex/tree/main/schema)
 [![Docs](https://img.shields.io/badge/docs-github-blue)](https://github.com/zeroatflops/flopsindex)
 
-**See also** — [docs & source](https://github.com/zeroatflops/flopsindex) · MCP server [`flopsindex-mcp`](https://pypi.org/project/flopsindex-mcp/) · [schema](https://github.com/zeroatflops/flopsindex/tree/main/schema) · [Public access overview](https://github.com/zeroatflops/flopsindex#public-access)
+**See also** — [docs & source](https://github.com/zeroatflops/flopsindex) · MCP server [`flopsindex-mcp`](https://pypi.org/project/flopsindex-mcp/) · [schema](https://github.com/zeroatflops/flopsindex/tree/main/schema) · [Public access overview](https://github.com/zeroatflops/flopsindex#whats-distinctive)
 
 ```bash
 pip install flopsindex
@@ -18,11 +18,11 @@ Python client for the FLOPS public API — delayed public GPU compute reference 
 
 ## Public access
 
-This package exposes the **public FLOPS index surface** only: citeable reference rates with verify and permalink URLs. Index construction methodology is not published in this repository — see [flopsindex.com](https://flopsindex.com) and the [public access overview](https://github.com/zeroatflops/flopsindex#public-access).
+This package exposes the **public FLOPS index surface** only: citeable reference rates with verify and permalink URLs. Index construction methodology is not published in this repository — see [flopsindex.com](https://flopsindex.com) and the [public access overview](https://github.com/zeroatflops/flopsindex#whats-distinctive).
 
 | Access | What you get | How (this package) |
 |---|---|---|
-| **Anonymous (default)** | Delayed public price (~6h grid; indicative, not for settlement) for the FLOPS family (FLOPS-SPOT, FLOPS-OD, FLOPS-DEPIN). | `Client()` with no API key |
+| **Anonymous (default)** | Delayed public price (~6h grid; indicative, not for settlement) for the FLOPS family — spot, on-demand and DePIN market types, e.g. `FLOPS-H100-OD`, `FLOPS-A100-SPOT`, `FLOPS-A100-DEPIN`. | `Client()` with no API key |
 | **Keyed** | Same endpoints at **real-time, full precision**. | `FLOPSINDEX_API_KEY` or `Client(api_key=...)` → `X-FLOPS-Api-Key` |
 | **Partner** | **Higher fidelity**, expanded coverage, and additional detail beyond the public delayed surface. | [team@flopsindex.com](mailto:team@flopsindex.com) |
 

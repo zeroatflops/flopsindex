@@ -8,15 +8,15 @@ Cloudflare Workers, browsers. Same method names as the
 [Python SDK](https://pypi.org/project/flopsindex/) so you can swap languages
 without relearning the API.
 
-**Monorepo** — [flopsindex](https://github.com/zeroatflops/flopsindex) · [Public access overview](https://github.com/zeroatflops/flopsindex#public-access)
+**Monorepo** — [flopsindex](https://github.com/zeroatflops/flopsindex) · [Public access overview](https://github.com/zeroatflops/flopsindex#whats-distinctive)
 
 ## Public access
 
-This package exposes the **public FLOPS index surface** only: citeable reference rates with verify and permalink URLs. Index construction methodology is not published in this repository — see [flopsindex.com](https://flopsindex.com) and the [public access overview](https://github.com/zeroatflops/flopsindex#public-access).
+This package exposes the **public FLOPS index surface** only: citeable reference rates with verify and permalink URLs. Index construction methodology is not published in this repository — see [flopsindex.com](https://flopsindex.com) and the [public access overview](https://github.com/zeroatflops/flopsindex#whats-distinctive).
 
 | Access | What you get | How (this package) |
 |---|---|---|
-| **Anonymous (default)** | Delayed public price (~6h grid; indicative, not for settlement) for the FLOPS family (FLOPS-SPOT, FLOPS-OD, FLOPS-DEPIN). | `new Client()` with no API key |
+| **Anonymous (default)** | Delayed public price (~6h grid; indicative, not for settlement) for the FLOPS family — spot, on-demand and DePIN market types, e.g. `FLOPS-H100-OD`, `FLOPS-A100-SPOT`, `FLOPS-A100-DEPIN`. | `new Client()` with no API key |
 | **Keyed** | Same endpoints at **real-time, full precision**. | `FLOPSINDEX_API_KEY` or `new Client({ apiKey })` → `X-FLOPS-Api-Key` |
 | **Partner** | **Higher fidelity**, expanded coverage, and additional detail beyond the public delayed surface. | [team@flopsindex.com](mailto:team@flopsindex.com) |
 
