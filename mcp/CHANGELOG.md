@@ -3,6 +3,20 @@
 All notable changes to the `flopsindex-mcp` MCP server. Versioning follows
 semver; semver guarantees apply only at 1.0 and above.
 
+## 0.12.5 — 2026-07-31
+
+Documentation only. No change to the five tools, their inputs, or their outputs.
+
+- **The README advertised four index ids that do not exist.** `FLOPS-SPOT`,
+  `FLOPS-OD` and `FLOPS-DEPIN` were presented as the FLOPS family; all three
+  return 404. They are market *types*, not index ids — a real id is
+  `FLOPS-<model>-<type>`. Replaced with ids verified live: `FLOPS-H100-OD`,
+  `FLOPS-A100-SPOT`, `FLOPS-A100-DEPIN`. This page renders on PyPI, so it was
+  the first thing a new user read, and following it failed on the first call.
+- **Two cross-repo links pointed at a `#public-access` anchor the monorepo
+  README does not have**, so both landed at the top of the page. Repointed to
+  the section that actually carries the access-mode overview.
+
 ## 0.12.4 — 2026-07-31
 
 Security fix. No change to the five public tools, their inputs, or their

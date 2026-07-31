@@ -3,6 +3,18 @@
 All notable changes to the `flopsindex` public-read SDK.
 Versioning follows semver; semver guarantees apply only at 1.0 and above.
 
+## 0.8.3 — 2026-07-31
+
+Documentation only. No change to the client, its methods, or its behaviour.
+
+- **The README advertised four index ids that do not exist** — `FLOPS-SPOT`,
+  `FLOPS-OD`, `FLOPS-DEPIN`, all of which 404. They are market *types*, not
+  index ids. Replaced with ids verified live against the public surface:
+  `FLOPS-H100-OD`, `FLOPS-A100-SPOT`, `FLOPS-A100-DEPIN`. This page renders on
+  PyPI, so the quick-start it shipped could not be followed successfully.
+- **Two cross-repo `#public-access` links were dead** and landed at the top of
+  the monorepo README. Repointed to the correct section.
+
 ## 0.8.2 — 2026-07-15
 
 - Excluded the test suite from the published sdist (packaging hygiene); prior
