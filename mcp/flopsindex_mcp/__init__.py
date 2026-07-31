@@ -3,4 +3,4 @@
 Exposes the public index catalog and verification endpoints over the
 Model Context Protocol.
 """
-__version__ = "0.12.3"
+__version__ = "0.12.4"

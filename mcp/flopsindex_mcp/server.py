@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import urllib.parse
 from typing import Any, Iterable
 
 import httpx
@@ -39,7 +41,37 @@ PUBLIC_PAYLOAD_FIELDS = (
     "index_id", "value", "unit", "as_of", "data_tier", "confidence",
     "verify_url", "citation_url", "permalink",
 )
-server: Server = Server("flopsindex")
+server: Server = Server("flopsindex", version=__version__)
+
+# ---------------------------------------------------------------------------
+# Index-id hygiene.
+#
+# Every index id reaching this server is chosen by an LLM, so it is untrusted
+# input in the ordinary sense: a prompt-injected model can pass whatever
+# string it likes. Interpolating that straight into the request path let a
+# caller walk out of /v1/price/ ("../v1/admin/orgs" resolved to
+# /v1/v1/admin/orgs) or bolt on a query string ("X?full=1") -- and because
+# _auth_headers() is unconditional, the operator's FLOPS_API_KEY rode along to
+# whatever path was reached. Not host-escaping (the base URL is fixed), but
+# enough to pull an authenticated response back into the model's context.
+#
+# Two independent defences, because either alone is one typo from useless:
+#   1. REJECT anything that is not a well-formed index id, before any I/O.
+#   2. PERCENT-ENCODE with safe="" so a slash, dot-segment, "?" or "#" cannot
+#      change the shape of the path even if the pattern is ever loosened.
+# ---------------------------------------------------------------------------
+_INDEX_ID_RE = re.compile(r"\A[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
+
+
+def _price_path(index_id: str) -> str | None:
+    """Return the /v1/price path for `index_id`, or None if it is malformed.
+
+    None means "do not make the request" -- callers must not fall back to an
+    unvalidated path.
+    """
+    if not _INDEX_ID_RE.match(index_id or ""):
+        return None
+    return "/v1/price/" + urllib.parse.quote(index_id, safe="")
 
 
 @server.list_tools()
@@ -49,7 +81,12 @@ async def list_tools() -> list[Tool]:
             name="list_indices",
             description=(
                 "List all public FLOPS compute-price indices. "
-                "Returns a JSON array of {index_id, family, cadence, unit}. "
+                # No `cadence` field exists anywhere in the API, and the
+                # return is an OBJECT, not an array. A model told to expect
+                # `cadence` reports it missing or invents it.
+                "Returns {count, indices[]} where each row is "
+                "{index_id, family, value, unit, as_of, confidence, "
+                "change_24h, delayed}. "
                 "Use this to discover available indices before calling "
                 "get_index or verify. No auth required."
             ),
@@ -104,11 +141,21 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_price",
+            # Describes the PASS-THROUGH honestly. This tool deliberately
+            # returns the server envelope verbatim -- the REST API is the
+            # source-opacity authority, and test_server.py pins that as the
+            # contract. The old text listed 7 fields and promised
+            # "source-opaque by design", implying a client-side filter that
+            # does not exist; get_index is the filtered one.
             description=(
                 "Fetch the current published value for a FLOPS compute "
-                "price index. Returns {value, unit, as_of, data_tier, "
-                "confidence, verify_url, citation_url}. "
-                "Source-opaque by design."
+                "price index. Returns the published envelope as-is: "
+                "{index_id, value, unit, as_of, delayed, data_tier, "
+                "confidence, change_24h, disclaimer, methodology_url, "
+                "verify_url, citation_url, permalink, upgrade} -- the "
+                "14-field envelope. Values are delayed "
+                "and indicative. Use get_index for the reduced, "
+                "citation-only payload."
             ),
             inputSchema={
                 "type": "object",
@@ -290,7 +337,12 @@ async def read_resource(uri: Any) -> Iterable[ReadResourceContents]:
     if not iid:
         body = json.dumps({"ok": False, "reason": "bad_uri", "uri": str(uri)})
         return [ReadResourceContents(content=body, mime_type="application/json")]
-    raw = await _get_json(f"/v1/price/{iid}")
+    path = _price_path(iid)
+    if path is None:
+        body = json.dumps({"ok": False, "reason": "bad_index_id",
+                           "uri": str(uri)})
+        return [ReadResourceContents(content=body, mime_type="application/json")]
+    raw = await _get_json(path)
     body = json.dumps(_project_public_payload(raw, iid), indent=2)
     return [ReadResourceContents(content=body, mime_type="application/json")]
 
@@ -300,7 +352,15 @@ async def _tool_get_index(args: dict[str, Any]) -> str:
     index_id = (args.get("index_id") or "").strip()
     if not index_id:
         return json.dumps({"error": "index_id is required"})
-    raw = await _get_json(f"/v1/price/{index_id}")
+    path = _price_path(index_id)
+    if path is None:
+        return json.dumps({
+            "error": "invalid_index_id",
+            "detail": ("index_id must look like FLOPS-H100-OD "
+                       "(letters, digits, '.', '_', '-'). "
+                       "Use search_indices or list_indices to resolve one."),
+        })
+    raw = await _get_json(path)
     return json.dumps(_project_public_payload(raw, index_id), indent=2)
 
 
@@ -342,7 +402,14 @@ async def _tool_verify(args: dict[str, Any]) -> str:
             # LLMs routinely stringify numbers, so "2.14" is accepted. "$2.14"
             # is NOT guessed at: a wrong parse yields a confident, wrong
             # receipt, which is worse than refusing.
-            params["value"] = float(raw)
+            parsed = float(raw)
+            # inf/nan parse cleanly but cannot be a submitted price, and
+            # would produce a confident verdict against a meaningless value
+            # -- the same reason bool is refused above.
+            if parsed != parsed or parsed in (float("inf"), float("-inf")):
+                return json.dumps({"ok": False, "reason": "bad_arg",
+                                   "detail": "value must be a finite number"})
+            params["value"] = parsed
         except (TypeError, ValueError):
             return json.dumps({"ok": False, "reason": "bad_arg",
                                "detail": "value must be a number, e.g. 2.14"})
@@ -355,7 +422,15 @@ async def _tool_get_price(args: dict[str, Any]) -> str:
     slug = (args.get("slug") or "").strip()
     if not slug:
         return json.dumps({"error": "slug is required"})
-    data = await _get_json(f"/v1/price/{slug}")
+    path = _price_path(slug)
+    if path is None:
+        return json.dumps({
+            "error": "invalid_slug",
+            "detail": ("slug must look like FLOPS-H100-OD "
+                       "(letters, digits, '.', '_', '-'). "
+                       "Use search_indices or list_indices to resolve one."),
+        })
+    data = await _get_json(path)
     return json.dumps(data, indent=2)
 
 
@@ -363,7 +438,16 @@ async def _tool_search_indices(args: dict[str, Any]) -> str:
     q = (args.get("q") or "").strip()
     if not q:
         return json.dumps({"error": "q is required"})
-    limit = int(args.get("limit") or 10)
+    # Bounded here, not only by inputSchema: jsonschema is enforced by the
+    # MCP host, so anything embedding this module directly bypasses it.
+    # "or 10" also turns an explicit 0 into 10, which is the intent.
+    try:
+        limit = int(args.get("limit") or 10)
+    except (TypeError, ValueError, OverflowError):
+        # OverflowError is float("inf") -> int; without it the blanket
+        # handler returns a raw CPython message into the model's context.
+        limit = 10
+    limit = max(1, min(limit, 50))
     data = await _get_json("/v1/search", params={"q": q, "limit": limit})
     return json.dumps(data, indent=2)
 
