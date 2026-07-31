@@ -75,4 +75,5 @@ class than on-demand. Flag it as decentralized and offer the cheapest convention
 - An optional `FLOPS_API_KEY` (header `X-FLOPS-Api-Key`) upgrades the same calls to real-time full
   precision, but is never required for public use.
 - The same data is available over MCP (see `.cursor/mcp.json`) and as SDKs (`pip install flopsindex`,
-  `npm i @flopsindex/sdk`). Attribution: **FLOPS Index** (github.com/zeroatflops).
+  `npm i @flopsindex/sdk`, `pip install langchain-flopsindex` for LangChain / LlamaIndex).
+  Attribution: **FLOPS Index** (github.com/zeroatflops).
