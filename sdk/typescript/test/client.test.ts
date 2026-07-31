@@ -2,6 +2,7 @@
  * Unit tests for @flopsindex/sdk Client. Mocked fetch — no network.
  * Run with: npm test  (vitest). Complements smoke.mjs (live contract).
  */
+import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   Client,
@@ -133,5 +134,24 @@ describe("search / verify / listIndices paths", () => {
     const { calls } = mockFetch(200, []);
     await new Client().listIndices();
     expect(calls[0]!.url).toBe("https://app.flopsindex.com/v2/catalog/public");
+  });
+});
+
+// The SDK deliberately ENCODES rather than rejects an odd index id (see
+// "encodes the index id in the path" above) -- it is a developer-facing
+// client, not a model-facing one. The reject-then-encode guard lives in the
+// MCP server and the langchain tools, where the id is model-authored.
+// What IS pinned here: the User-Agent version must track package.json. It had
+// drifted (SDK_VERSION 0.9.1 vs package 0.9.2).
+describe("version identity", () => {
+  it("reports the same version as package.json in its User-Agent", async () => {
+    const { calls } = mockFetch(200, { index_id: "x", value: 1 });
+    await new Client().getPrice("FLOPS-H100-OD");
+    const pkgVersion = JSON.parse(
+      readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+    ).version;
+    expect(calls[0].headers["User-Agent"]).toContain(
+      `@flopsindex/sdk/${pkgVersion}`,
+    );
   });
 });
