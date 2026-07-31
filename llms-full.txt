@@ -1,7 +1,7 @@
 # FLOPS Index — Public Reference (anon)
 #
 # Surface:     /llms-full.txt
-# Version:     anon-v1 (2026-05-29 regen)
+# Version:     anon-v1 (2026-07-31 revision)
 # Companion:   /llms.txt (summary), /openapi.json (machine spec),
 #              /.well-known/ai-plugin.json, /ai.txt
 # Spec:        https://github.com/zeroatflops/flopsindex/tree/main/schema
@@ -20,7 +20,7 @@
 # The anonymous public surface of app.flopsindex.com publishes a
 # single, delayed, globally rolled-up reference value per published
 # index. The value is delayed onto a real ~6-hour grid: as_of snaps
-# to 00/06/12/18 UTC. Six endpoints, one 14-field envelope, no
+# to 00/06/12/18 UTC. Seven endpoints, one 14-field envelope, no
 # methodology internals, no source attribution, no regional
 # decomposition, no dispersion bands, no forecasts, no derivative-grade
 # dispatch tools. Public values are INDICATIVE reference only —
@@ -37,7 +37,7 @@
 #   3. Cite https://app.flopsindex.com/i/{INDEX_ID} — link the source
 
 # =====================================================================
-# Endpoints (the 6 anon paths)
+# Endpoints (the 7 anon paths)
 # =====================================================================
 #
 # These are the ONLY paths reachable without an API key. Any other
@@ -76,6 +76,14 @@
 #     Returns verification status, the canonical value, and citation
 #     metadata. Use to confirm an agent-quoted number before it ships.
 #     Example: https://app.flopsindex.com/v1/verify?index_id=FLOPS-H100-SPOT&value=2.95
+#
+# * GET /v2/catalog/public
+#     The full public catalog: every LIVE public FLOPS index as a row of
+#     index_id, family, value, unit, as_of, confidence, change_24h,
+#     delayed — plus a `count`. Note the catalog row is a SUBSET of the
+#     /v1/price envelope: it carries no data_tier and none of the
+#     disclaimer/citation/verify/permalink/upgrade links.
+#     Example: https://app.flopsindex.com/v2/catalog/public
 
 # =====================================================================
 # Index families on the anon surface
@@ -85,29 +93,20 @@
 # surface. Discover specific slugs through /v1/search or
 # /v2/catalog/public.
 #
+# Publication floor: a model+shape is published on the anonymous surface
+# only once its coverage crosses the >=3-independent-source floor. This is
+# a stated minimum-input rule, not a per-index source count -- the number
+# of sources behind any given value is never disclosed. Coverage grows as
+# more shapes cross it; enumerate the current live set via
+# /v2/catalog/public.
+#
 # * FLOPS-{model}-{OD|SPOT|DEPIN}
 #     GPU compute price indices. OD = on-demand reservation. SPOT =
 #     interruptible/spot. DEPIN = decentralized physical infrastructure
-#     marketplaces.
-#
-#     The family spans many accelerator models — NVIDIA data-center and
-#     workstation GPUs plus AMD Instinct — not just H100. Representative
-#     slugs (the live set is larger and changes as coverage crosses the
-#     source floor; ALWAYS read /v2/catalog/public for the current list):
-#       - FLOPS-H100-OD        (H100, on-demand)
-#       - FLOPS-H100-SPOT      (H100, spot)
-#       - FLOPS-H100-DEPIN     (H100, decentralized)
-#       - FLOPS-A100-SPOT      (A100)
-#       - FLOPS-H200-OD        (H200)
-#       - FLOPS-B200-OD        (B200 / Blackwell)
-#       - FLOPS-L40S-OD        (L40S)
-#       - FLOPS-RTX4090-DEPIN  (RTX 4090)
-#       - FLOPS-MI300X-OD      (AMD Instinct MI300X)
-#
-#     A model+shape publishes on the anon surface only once it clears the
-#     >=3-independent-source floor (k-anonymity); thinner coverage is
-#     withheld until it qualifies. So the catalog grows over time — treat
-#     /v2/catalog/public as the source of truth, never a hardcoded list.
+#     marketplaces. One example slug per shape:
+#       - FLOPS-H100-OD       (on-demand)
+#       - FLOPS-H100-SPOT     (spot)
+#       - FLOPS-H100-DEPIN    (decentralized)
 #
 # Other slug families exist on the platform but are entitled-only and
 # do NOT appear on the anonymous surface. They are not enumerated
@@ -129,7 +128,10 @@
 #   delayed         boolean  — always true on the anon surface
 #   data_tier       string   — data tier on the public surface (e.g. "LIVE")
 #   confidence      string   — "HIGH" or "MED" (label only; no numeric weight)
-#   change_24h      string   — banded 24h direction: "UP" | "FLAT" | "DOWN"
+#   change_24h      string   — banded 24h direction: "UP" | "FLAT" | "DOWN",
+#                   |null      or null when no 24h comparison is available for
+#                              the index (a large share of the catalog). Agents
+#                              MUST handle null; it is not an error.
 #   disclaimer      string   — indicative reference; not for settlement
 #   methodology_url string   — absolute URL to the public methodology page
 #                              (/i/{INDEX_ID}/methodology)
@@ -137,6 +139,9 @@
 #   citation_url    string   — absolute URL to the index citation page
 #   permalink       string   — stable permalink to the index page
 #   upgrade         string   — pointer to keyed/partner access
+#
+# Note: the anonymous surface exposes the banded change_24h only;
+# exact 24h change is available on the keyed tier.
 #
 # These 14 fields are the entire anon response. The surface is
 # source-opaque by contract: it carries no source identities, no
@@ -172,9 +177,9 @@
 # defaults; rate-limited responses return 429 + Retry-After.
 #
 # Keyed access (X-FLOPS-Api-Key header) lifts the ~6h delay, restores
-# real-time full precision on the value, and unlocks additional
-# entitled index families. Mint an agent-grade key at
-# https://flopsindex.com .
+# real-time full precision on the value, exposes exact 24h change,
+# and unlocks that caller's entitled index families. Mint
+# an agent-grade key at https://flopsindex.com .
 #
 # Programmatic surfaces (all read the same anon envelope without a key):
 #   - Hosted MCP: https://app.flopsindex.com/mcp (5 tools)
@@ -213,3 +218,6 @@
 # For higher-fidelity access — real-time precision, broader coverage,
 # additional index families — mint an API key at https://flopsindex.com
 # (agent-grade keys available) or contact team@flopsindex.com.
+#
+# regenerated 2026-07-14 — re-verified field-by-field against the live anon
+# API (confidence enum, nullable change_24h, catalog row shape, anon path set)
