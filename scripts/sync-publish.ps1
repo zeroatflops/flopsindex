@@ -1,6 +1,34 @@
-# Sync monorepo packages -> PyPI/npm publish mirrors in flops_public.
-# Run from repo root:  .\scripts\sync-publish.ps1
-# Requires: flopsindex/ (this repo) and sibling folders flopsindex-mcp, flopsindex-pysdk, flopsindex-tssdk
+# RETIRED 2026-08-01 — DO NOT RUN. Kept for history only.
+#
+# This synced monorepo packages -> the sibling publish-mirror folders
+# flopsindex-mcp / flopsindex-pysdk / flopsindex-tssdk. Those folders were
+# DELETED on 2026-08-01 and must not be recreated. Each had drifted a release
+# behind its source while still holding built, uploadable dist/ artifacts:
+# the mcp mirror's README still advertised the phantom slugs FLOPS-SPOT /
+# FLOPS-OD / FLOPS-DEPIN (all 404), and the tssdk mirror held the 0.9.2 build
+# whose SDK_VERSION reported 0.9.1. Publishing from a mirror re-shipped
+# defects that had already been fixed in the monorepo.
+#
+# Packages are now published from their single source of truth:
+#   flopsindex-mcp   -> flopsindex/mcp/
+#   flopsindex       -> flopsindex/sdk/python/
+#   @flopsindex/sdk  -> flopsindex/sdk/typescript/
+# See flops_public/PUBLISHING.md.
+#
+# Guarded rather than deleted so the history and the preflight checks below
+# stay readable, and so anyone who finds this script in an old runbook gets an
+# explanation instead of a half-completed sync into recreated stale folders.
+
+Write-Host ""
+Write-Host "sync-publish.ps1 is RETIRED and will not run." -ForegroundColor Yellow
+Write-Host "The publish-mirror folders it targets were deleted on 2026-08-01." -ForegroundColor Yellow
+Write-Host "Publish from the source of truth instead:" -ForegroundColor Yellow
+Write-Host "  flopsindex-mcp  -> flopsindex/mcp/"
+Write-Host "  flopsindex      -> flopsindex/sdk/python/"
+Write-Host "  @flopsindex/sdk -> flopsindex/sdk/typescript/"
+Write-Host "See flops_public/PUBLISHING.md for why. Set FLOPS_ALLOW_RETIRED_SYNC=1 to override."
+Write-Host ""
+if (-not $env:FLOPS_ALLOW_RETIRED_SYNC) { exit 1 }
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path $PSScriptRoot -Parent
